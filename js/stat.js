@@ -8,13 +8,24 @@ var COLUMN_HEIGHT = 150;
 var COLUMN_DIST = 50;
 var GIST_START_X = 145;
 var GIST_START_Y = 83;
+var START_TEXT_Y = GIST_START_Y + 172;
 
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, CLOUD_WIDTH,CLOUD_HEIGHT);
 }
 
-window.renderStatistics = function (ctx, players, time, color) {
+var getMaxElement = function(arr) {
+  var maxElement = arr[0];
+
+  for (var i = 0; i < arr.lenght; i++) {
+    if (arr[i] > maxElement) {
+      maxElement = arr[i];
+    }
+  }
+}
+
+window.renderStatistics = function (ctx, names, times) {
   renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, 'rgba(0,0,0,0.7)');
   renderCloud(ctx, CLOUD_X, CLOUD_Y, 'white');
 
@@ -25,32 +36,20 @@ window.renderStatistics = function (ctx, players, time, color) {
 
   ctx.fillStyle = 'black';
 
-  var playerIndex = 0;
-  var playerName = 'Вы';
-
-  ctx.fillText(playerName, GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 255);
-  ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 83, COLUMN_WIDTH, COLUMN_HEIGHT);
-
-  var playerIndex = 1;
-  var playerName = 'Кекс';
-
-  ctx.fillText(playerName, GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 255);
-  ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 83, COLUMN_WIDTH, 100);
-
-  var playerIndex = 2;
-  var playerName = 'Катя';
-
-  ctx.fillText(playerName, GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST)* playerIndex, 255);
-  ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 83, COLUMN_WIDTH, 80);
-
-  var playerIndex = 3;
-  var playerName = 'Игорь';
-
-  ctx.fillText(playerName, GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 255);
-  ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * playerIndex, 83, COLUMN_WIDTH, COLUMN_HEIGHT);
+  var maxTime = getMaxElement(times);
 
 
-
-
-
+  for (i = 0; i < names.length; i++) {
+    ctx.fillText(names[i], GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, START_TEXT_Y);
+    //ctx.fillText(times[i], GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST), (COLUMN_HEIGHT + 10));
+    ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, GIST_START_Y, COLUMN_WIDTH, (COLUMN_HEIGHT * times[i]) / maxTime);
+    /**
+     * if (names = 'Вы') {
+     * ctx.fillStyle =  'rgba(255, 0, 0, 1)';
+     * } else {
+     * ctx.fillStyle = 'hsl(240, 10%, 100%)';
+     * }
+     */
+  }
 }
+
