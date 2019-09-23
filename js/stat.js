@@ -4,17 +4,19 @@ var CLOUD_X = 100;
 var CLOUD_Y = 10;
 var GAP = 10;
 var COLUMN_WIDTH = 40;
-var COLUMN_HEIGHT = 150;
+var COLUMN_HEIGHT = 50;
 var COLUMN_DIST = 50;
 var GIST_START_X = 145;
 var GIST_START_Y = 83;
-var START_TEXT_Y = GIST_START_Y + 172;
+var START_TEXT_Y = GIST_START_Y + 172; // 172 из за того что не могу нормально построить гистограммы, рисует сверху вниз, и координата плавает.
 
+// Функция параметров Белого облака
 var renderCloud = function (ctx, x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, CLOUD_WIDTH,CLOUD_HEIGHT);
 }
 
+// Нахождение маскимального значения times
 var getMaxElement = function(arr) {
   var maxElement = arr[0];
 
@@ -23,6 +25,7 @@ var getMaxElement = function(arr) {
       maxElement = arr[i];
     }
   }
+  return maxElement;
 }
 
 window.renderStatistics = function (ctx, names, times) {
@@ -31,25 +34,26 @@ window.renderStatistics = function (ctx, names, times) {
 
   ctx.fillStyle = 'black';
   ctx.font = '16px PT Mono';
-  ctx.fillText('Ура вы победили!', 125,40);
-  ctx.fillText('Список результатов:', 125,60);
-
-  ctx.fillStyle = 'black';
+  ctx.fillText('Ура вы победили!', 125, 40);
+  ctx.fillText('Список результатов:', 125, 60);
 
   var maxTime = getMaxElement(times);
 
-
-  for (i = 0; i < names.length; i++) {
+  //Цикл построения гистограммы
+  // Вопрос с гистограммой, чтобы она рисовалась снизу вверх, добавлял минус, но это ее как то уменьшало,
+  // как будто переносилось анчало координат.
+  for (var i = 0; i < names.length; i++) {
     ctx.fillText(names[i], GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, START_TEXT_Y);
-    //ctx.fillText(times[i], GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST), (COLUMN_HEIGHT + 10));
+    ctx.fillText(Math.floor(times[i]), GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, (COLUMN_HEIGHT + GAP));
     ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, GIST_START_Y, COLUMN_WIDTH, (COLUMN_HEIGHT * times[i]) / maxTime);
-    /**
-     * if (names = 'Вы') {
-     * ctx.fillStyle =  'rgba(255, 0, 0, 1)';
-     * } else {
-     * ctx.fillStyle = 'hsl(240, 10%, 100%)';
-     * }
-     */
+
+    //Функция определения цвета
+    // А цвет почему то все равно не работает и как сделать, чтобы он цветом выделял именно гистограмму, а не текст?
+    if (names[i] === 'Вы') {
+      ctx.fillStyle =  'rgba(255, 0, 0, 1)';
+      } else {
+      ctx.fillStyle = 'hsl(240, Math.floor(Math.random() * 100), 50%)'; // 50% не трогал, так как в задании было прописано изменять насыщенность
+      };
   }
 }
 
