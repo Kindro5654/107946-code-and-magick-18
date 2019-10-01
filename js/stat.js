@@ -6,9 +6,10 @@ var GAP = 10;
 var COLUMN_WIDTH = 40;
 var COLUMN_HEIGHT = 50;
 var COLUMN_DIST = 50;
-var GIST_START_X = 145;
+var COLUMN_PositionX = CLOUD_X + COLUMN_WIDTH;
+var COLUMN_PositionY = (CLOUD_Y + GAP * 2);
 var GIST_START_Y = 83;
-var START_TEXT_Y = GIST_START_Y + 172; // 172 из за того что не могу нормально построить гистограммы, рисует сверху вниз, и координата плавает.
+var START_TEXT_Y = GIST_START_Y + 172;
 
 // Функция параметров Белого облака
 var renderCloud = function (ctx, x, y, color) {
@@ -40,20 +41,35 @@ window.renderStatistics = function (ctx, names, times) {
   var maxTime = getMaxElement(times);
 
   //Цикл построения гистограммы
-  // Вопрос с гистограммой, чтобы она рисовалась снизу вверх, добавлял минус, но это ее как то уменьшало,
-  // как будто переносилось анчало координат.
-  for (var i = 0; i < names.length; i++) {
-    ctx.fillText(names[i], GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, START_TEXT_Y);
-    ctx.fillText(Math.floor(times[i]), GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, (COLUMN_HEIGHT + GAP));
-    ctx.fillRect(GIST_START_X + (COLUMN_WIDTH + COLUMN_DIST) * i, GIST_START_Y, COLUMN_WIDTH, (COLUMN_HEIGHT * times[i]) / maxTime);
 
-    //Функция определения цвета
-    // А цвет почему то все равно не работает и как сделать, чтобы он цветом выделял именно гистограмму, а не текст?
+  for (var i = 0; i < names.length; i++) {
+    var playerName = names[i];
+    var positionX = COLUMN_PositionX + ((COLUMN_WIDTH + COLUMN_DIST) * i);
+    var namePositionY = CLOUD_HEIGHT - GAP;
+    ctx.fillStyle = 'black';
+
+    ctx.fillText(playerName, positionX, namePositionY);
+
+    var playerTime = Math.floor(times[i]);
+    var scorePositionY = CLOUD_HEIGHT - ((GAP * times[i]) / maxTime);
+
+    ctx.fillText(playerTime, positionX, scorePositionY);
+
+    // Функция выбора цвета
     if (names[i] === 'Вы') {
       ctx.fillStyle =  'rgba(255, 0, 0, 1)';
       } else {
-      ctx.fillStyle = 'hsl(240, Math.floor(Math.random() * 100), 50%)'; // 50% не трогал, так как в задании было прописано изменять насыщенность
-      };
+      var randomNumber = Math.floor(Math.random() * 100);
+
+      ctx.fillStyle = 'hsl(200,' + randomNumber + ', 50%)';
+    };
+
+    var columnPositionY = (CLOUD_X + GAP * 2) * 2;
+    var calculatedColumnHeight = -((COLUMN_HEIGHT * times[i]) / maxTime);
+
+    ctx.fillRect(positionX, columnPositionY, COLUMN_WIDTH, calculatedColumnHeight - 70);
+
   }
 }
+
 
